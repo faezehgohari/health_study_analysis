@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt 
 import pandas as pd
 import numpy as np
+import seaborn as sns
 
 def hist_distribution_systolic_blood_pressure(df):
     '''
@@ -55,3 +56,27 @@ def bar_real_vs_simulated(df , values):
     for i, v in enumerate(values):
         ax.text(i, v+0.3, f"{v:.2f}%", ha='center', fontsize=11)
     return ax
+
+def extended_visualization(df):
+    fig, axs = plt.subplots(1, 2, figsize=(14,5))
+
+    # Scatter plot: blodtryck vs ålder
+    sns.scatterplot(x='age', y='systolic_bp', hue='disease', data=df, 
+                    palette='Set1', alpha=0.7, ax=axs[0])
+    sns.regplot(x='age', y='systolic_bp', data=df, scatter=False, color='black', ax=axs[0])
+    axs[0].set_xlabel("Ålder")
+    axs[0].set_ylabel("Systoliskt blodtryck")
+    axs[0].set_title("Relation mellan ålder och systoliskt blodtryck")
+
+    # Bar plot: sjukdomsförekomst per kön
+    disease_by_sex = df.groupby('sex', observed=False)['disease'].apply(lambda x: x.astype(int).mean() * 100)
+
+    axs[1].bar(disease_by_sex.index, disease_by_sex.values, color=['#4C72B0','#76B7B2'], edgecolor='black')
+    axs[1].set_ylabel("Andel med sjukdom (%)")
+    axs[1].set_ylim(0, 100)
+    axs[1].set_title("Sjukdomsförekomst per kön")
+    for i, v in enumerate(disease_by_sex.values):
+        axs[1].text(i, v + 1, f"{v:.1f}%", ha='center')
+
+    plt.tight_layout()
+    return fig, axs
