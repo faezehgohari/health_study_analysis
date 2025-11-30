@@ -2,13 +2,22 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 
 class HealthLinearModels:
+    """
+    Perform linear regression analyses on health study data.
+    """
     def __init__(self, df):
         self.df = df
 
     def linear_regression_bp(self):
         """
-        Linjär regression för att förutsäga systoliskt blodtryck
-        från ålder och vikt.
+        Predict systolic blood pressure from age and weight using linear regression.
+
+        Returns
+        -------
+        model : sklearn.linear_model.LinearRegression
+            Fitted regression model.
+        dict : 
+            Dictionary with 'intercept', 'coefficients', and predictions for first 5 rows.
         """
         X = self.df[['age', 'weight']].values
         y = self.df['systolic_bp'].values

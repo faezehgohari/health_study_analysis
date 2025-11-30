@@ -1,9 +1,22 @@
 import numpy as np
 from scipy.stats import norm
+from scipy.stats import ttest_ind
 
 def ci_normal(data, confidence=0.95):
     """
-    Confidence interval using normal approximation.
+    Compute the confidence interval for the mean using normal approximation.
+
+    Parameters
+    ----------
+    data : array-like
+        Sample values.
+    confidence : float, optional
+        Confidence level (default 0.95).
+
+    Returns
+    -------
+    (float, float)
+        Lower and upper bounds of the confidence interval.
     """
     mean = np.mean(data)
     std = np.std(data, ddof=1)
@@ -18,7 +31,18 @@ def ci_normal(data, confidence=0.95):
 
 def ci_bootstrap(data, B=5000, confidence=0.95, seed=42):
     """
-    Confidence interval using bootstrap resampling.
+    Bootstrap confidence interval for the mean.
+
+    Parameters
+    ----------
+    data : array-like
+    B : int, number of resamples
+    confidence : float, confidence level
+    seed : int, random seed
+
+    Returns
+    -------
+    (float, float) : lower and upper bounds
     """
     np.random.seed(seed)
     boot_means = []
@@ -33,8 +57,7 @@ def ci_bootstrap(data, B=5000, confidence=0.95, seed=42):
     ci_high = np.percentile(boot_means, 100 - alpha)
 
     return ci_low, ci_high
-import numpy as np
-from scipy.stats import ttest_ind
+
 
 def one_sided_ttest_smoking(df, bp_col="systolic_bp", smoker_col="smoker"):
     """
