@@ -58,25 +58,43 @@ def bar_real_vs_simulated(df , values):
     return ax
 
 def extended_visualization(df):
-    fig, axs = plt.subplots(1, 2, figsize=(14,5))
+    """
+    Create extended visualizations:
+    1. Scatter plot: Age vs Systolic Blood Pressure
+    2. Bar chart: Disease prevalence (%) per sex
+    """
 
-    # Scatter plot: blodtryck vs ålder
-    sns.scatterplot(x='age', y='systolic_bp', hue='disease', data=df, 
-                    palette='Set1', alpha=0.7, ax=axs[0])
-    sns.regplot(x='age', y='systolic_bp', data=df, scatter=False, color='black', ax=axs[0])
-    axs[0].set_xlabel("Ålder")
-    axs[0].set_ylabel("Systoliskt blodtryck")
+    import matplotlib.pyplot as plt
+
+    fig, axs = plt.subplots(1, 2, figsize=(14, 5))
+
+    # -----------------------------
+    # 1. Scatter plot: Age vs BP
+    # -----------------------------
+    axs[0].scatter(df["age"], df["systolic_bp"], alpha=0.6, edgecolor="black")
     axs[0].set_title("Relation mellan ålder och systoliskt blodtryck")
+    axs[0].set_xlabel("Ålder")
+    axs[0].set_ylabel("Systoliskt blodtryck (mmHg)")
 
-    # Bar plot: sjukdomsförekomst per kön
-    disease_by_sex = df.groupby('sex', observed=False)['disease'].apply(lambda x: x.astype(int).mean() * 100)
+    y_max = df["systolic_bp"].max() + 5
+    y_min = max(0, df["systolic_bp"].min() - 5)
+    axs[0].set_ylim(y_min, y_max)
 
-    axs[1].bar(disease_by_sex.index, disease_by_sex.values, color=['#4C72B0','#76B7B2'], edgecolor='black')
-    axs[1].set_ylabel("Andel med sjukdom (%)")
-    axs[1].set_ylim(0, 100)
-    axs[1].set_title("Sjukdomsförekomst per kön")
-    for i, v in enumerate(disease_by_sex.values):
-        axs[1].text(i, v + 1, f"{v:.1f}%", ha='center')
+    # -----------------------------
+    # 2. Bar chart: Disease per sex
+    # -----------------------------
+    df["disease_num"] = df["disease"].astype(int)
+
+    # ✔️ بدون FutureWarning
+    disease_by_sex = df.groupby("sex", observed=False)["disease_num"].mean() * 100
+
+    axs[1].bar(
+        disease_by_sex.index.astype(str),
+        disease_by_sex.values,
+        edgecolor="black"
+    )
+    axs[1].set_title("Andel med sjukdom per kön (%)")
+    axs[1].set_ylabel("Sjukdom (%)")
 
     plt.tight_layout()
-    return fig, axs
+    plt.show()
