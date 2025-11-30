@@ -1,24 +1,26 @@
-# linear_models.py
 import numpy as np
-import pandas as pd
 from sklearn.linear_model import LinearRegression
 
-def linear_regression_bp(df):
-    """
-    Enkel linjär regression för att förutsäga systoliskt blodtryck
-    från ålder och vikt.
-    """
-    X = df[['age', 'weight']].values
-    y = df['systolic_bp'].values
+class HealthLinearModels:
+    def __init__(self, df):
+        self.df = df
 
-    model = LinearRegression()
-    model.fit(X, y)
+    def linear_regression_bp(self):
+        """
+        Linjär regression för att förutsäga systoliskt blodtryck
+        från ålder och vikt.
+        """
+        X = self.df[['age', 'weight']].values
+        y = self.df['systolic_bp'].values
 
-    # Print resultat med förklaring
-    print("Intercept:", model.intercept_)
-    print("Coefficients (age, weight):", model.coef_)
-    
-    y_pred = model.predict(X[:5])
-    print("Predictions for first 5 individuals:", y_pred.round(2))
+        model = LinearRegression()
+        model.fit(X, y)
 
-    return model, y_pred
+        y_pred = model.predict(X[:5])
+
+        return model, {
+            "intercept": model.intercept_,
+            "coefficients": model.coef_,
+            "pred_first_5": y_pred.round(2)
+        }
+

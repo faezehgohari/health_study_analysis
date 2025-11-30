@@ -63,31 +63,19 @@ def extended_visualization(df):
     1. Scatter plot: Age vs Systolic Blood Pressure
     2. Bar chart: Disease prevalence (%) per sex
     """
-
     import matplotlib.pyplot as plt
-
     fig, axs = plt.subplots(1, 2, figsize=(14, 5))
-
-    # -----------------------------
     # 1. Scatter plot: Age vs BP
-    # -----------------------------
     axs[0].scatter(df["age"], df["systolic_bp"], alpha=0.6, edgecolor="black")
     axs[0].set_title("Relation mellan ålder och systoliskt blodtryck")
     axs[0].set_xlabel("Ålder")
     axs[0].set_ylabel("Systoliskt blodtryck (mmHg)")
-
     y_max = df["systolic_bp"].max() + 5
     y_min = max(0, df["systolic_bp"].min() - 5)
     axs[0].set_ylim(y_min, y_max)
-
-    # -----------------------------
     # 2. Bar chart: Disease per sex
-    # -----------------------------
     df["disease_num"] = df["disease"].astype(int)
-
-    # ✔️ بدون FutureWarning
     disease_by_sex = df.groupby("sex", observed=False)["disease_num"].mean() * 100
-
     axs[1].bar(
         disease_by_sex.index.astype(str),
         disease_by_sex.values,
@@ -95,6 +83,5 @@ def extended_visualization(df):
     )
     axs[1].set_title("Andel med sjukdom per kön (%)")
     axs[1].set_ylabel("Sjukdom (%)")
-
     plt.tight_layout()
     plt.show()
